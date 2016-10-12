@@ -1,3 +1,5 @@
+import java.io.*;
+import java.util.*;
 
 public class BinaryCode {
 	
@@ -42,9 +44,5 @@ public class BinaryCode {
 		
 		return new String(P);
 	}
-	
-	public static void main(String[] args) {
-		String[] result = new BinaryCode().decode("10");
-		System.out.println(result[0] + '\n' + result[1]);
-	}
+
 }

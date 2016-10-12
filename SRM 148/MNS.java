@@ -2,94 +2,68 @@ import java.io.*;
 import java.util.*;
 
 public class MNS {
-	public int combos(int[] numbers) {
-		return 0;
+	public static int res;
+	public static int[] nums;
+	public static boolean[] isUsed;
+	public static int[][] square;
+	public static int sum;
+	public static int[] times;
+	
+	public static boolean isMagic() {
+		for (int i = 0; i < 3; i++)
+			if(square[i][0] + square[i][1] + square[i][2] != sum || square[0][i] + square[1][i] + square[2][i] != sum)
+				return false;	
+		return true;
 	}
-
-// CUT begin
-	public static void main(String[] args){
-		System.err.println("MNS (450 Points)");
-		System.err.println();
-		HashSet<Integer> cases = new HashSet<Integer>();
-        for (int i = 0; i < args.length; ++i) cases.add(Integer.parseInt(args[i]));
-        runTest(cases);
-	}
-
-	static void runTest(HashSet<Integer> caseSet) {
-	    int cases = 0, passed = 0;
-	    while (true) {
-	    	String label = Reader.nextLine();
-	    	if (label == null || !label.startsWith("--"))
-	    		break;
-
-            int[] numbers = new int[Integer.parseInt(Reader.nextLine())];
-            for (int i = 0; i < numbers.length; ++i)
-                numbers[i] = Integer.parseInt(Reader.nextLine());
-            Reader.nextLine();
-            int __answer = Integer.parseInt(Reader.nextLine());
-
-            cases++;
-            if (caseSet.size() > 0 && !caseSet.contains(cases - 1))
-                continue;
-    		System.err.print(String.format("  Testcase #%d ... ", cases - 1));
-
-            if (doTest(numbers, __answer))
-                passed++;
-	    }
-	    if (caseSet.size() > 0) cases = caseSet.size();
-        System.err.println(String.format("%nPassed : %d/%d cases", passed, cases));
-
-        int T = (int)(System.currentTimeMillis() / 1000) - 1476282836;
-        double PT = T / 60.0, TT = 75.0;
-        System.err.println(String.format("Time   : %d minutes %d secs%nScore  : %.2f points", T / 60, T % 60, 450 * (0.3 + (0.7 * TT * TT) / (10.0 * PT * PT + TT * TT))));
-	}
-
-	static boolean doTest(int[] numbers, int __expected) {
-		long startTime = System.currentTimeMillis();
-		Throwable exception = null;
-		MNS instance = new MNS();
-		int __result = 0;
-		try {
-			__result = instance.combos(numbers);
+	
+	public static void dfs(int n) {
+		if(n == 9) {
+			if(isMagic())
+				res ++;
+			return;
 		}
-		catch (Throwable e) { exception = e; }
-		double elapsed = (System.currentTimeMillis() - startTime) / 1000.0;
-
-		if (exception != null) {
-			System.err.println("RUNTIME ERROR!");
-			exception.printStackTrace();
+		for (int i = 0; i < isUsed.length; i++)
+			if(!isUsed[i]) {
+				isUsed[i] = true;
+				square[n / 3][n % 3] = nums[i];
+				dfs(n + 1);
+				isUsed[i] = false;
+				square[n / 3][n % 3] = 0;
+			}
+	}
+	
+	public static boolean init(int[] numbers) {
+		res = 0;
+		nums = numbers;
+		isUsed = new boolean[9];
+		square = new int[3][3];
+		times = new int[10];
+		for (int i = 0; i < numbers.length; i++) {
+			sum += numbers[i];
+			times[numbers[i]] ++;
+		}
+		if(sum % 3 != 0)
 			return false;
-		}
-		else if (__result == __expected) {
-			System.err.println("PASSED! " + String.format("(%.2f seconds)", elapsed));
+		else {
+			sum /= 3;
 			return true;
 		}
+	}
+	
+	public int combos(int[] numbers) {
+		if(init(numbers)) {
+			dfs(0);
+			for (int i = 0; i < 10; i++)
+				if(times[i] > 1) {
+					for (int j = 2; j <= times[i]; j++) {
+						res /= j;
+					}
+				}
+			return res;
+		}
 		else {
-			System.err.println("FAILED! " + String.format("(%.2f seconds)", elapsed));
-			System.err.println("           Expected: " + __expected);
-			System.err.println("           Received: " + __result);
-			return false;
+			return 0;
 		}
 	}
 
-	static class Reader {
-        private static final String dataFileName = "MNS.sample";
-	    private static BufferedReader reader;
-
-	    public static String nextLine() {
-	        try {
-                if (reader == null) {
-                    reader = new BufferedReader(new InputStreamReader(new FileInputStream(dataFileName)));
-                }
-                return reader.readLine();
-	        }
-	        catch (IOException e) {
-	            System.err.println("FATAL!! IOException");
-	            e.printStackTrace();
-	            System.exit(1);
-	        }
-	        return "";
-	    }
-	}
-// CUT end
 }

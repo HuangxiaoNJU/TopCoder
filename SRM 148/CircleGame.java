@@ -1,18 +1,53 @@
+package srm148;
+
 import java.io.*;
 import java.util.*;
 
 public class CircleGame {
 	public int cardsLeft(String deck) {
-		return 0;
+		Vector<Integer> cards = new Vector<Integer>();
+		for (char c : deck.toCharArray()) {
+			int value;
+			switch(c) {
+			case 'A': value = 1;  break;
+			case 'T': value = 10; break;
+			case 'J': value = 11; break;
+			case 'Q': value = 12; break;
+			case 'K': value = 13;  break;
+			default : value = c - '0'; break;
+			}
+			if(value != 13)
+				cards.add(value);
+		}
+		boolean done = false;
+		while(!done) {
+			done = true;
+			for (int i = 0; i < cards.size(); i++) {
+				if(cards.get(i) + cards.get((i + 1) % cards.size()) == 13) {
+					done = false;
+					if(i == cards.size() - 1) {
+						cards.remove(i);
+						cards.remove(0);
+					}
+					else {
+						cards.remove(i);
+						cards.remove(i);
+					}
+					i--;
+				}
+			}
+		}
+		return cards.size();
 	}
 
 // CUT begin
 	public static void main(String[] args){
-		System.err.println("CircleGame (250 Points)");
-		System.err.println();
-		HashSet<Integer> cases = new HashSet<Integer>();
-        for (int i = 0; i < args.length; ++i) cases.add(Integer.parseInt(args[i]));
-        runTest(cases);
+//		System.err.println("CircleGame (250 Points)");
+//		System.err.println();
+//		HashSet<Integer> cases = new HashSet<Integer>();
+//        for (int i = 0; i < args.length; ++i) cases.add(Integer.parseInt(args[i]));
+//        runTest(cases);
+		System.out.println(new CircleGame().cardsLeft("7879J4JQK24Q46K2A3TQ7T4256632TQ738JA6KA8K959J5T895"));
 	}
 
 	static void runTest(HashSet<Integer> caseSet) {
